@@ -13,6 +13,56 @@ app.use(cors({
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto_ghost2024';
 
+// Base de datos en memoria para atletas registrados con datos iniciales
+const atletasRegistrados = [
+  {
+    id: 1,
+    nombre: 'Mateo Rodríguez',
+    edad: 17,
+    barrio: 'Suba',
+    posicion: 'Delantero',
+    whatsapp: '3104567890',
+    plan: 'Plan Jugador',
+    fecha: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    id: 2,
+    nombre: 'Valentina Gómez',
+    edad: 19,
+    barrio: 'Chapinero',
+    posicion: 'Medio',
+    whatsapp: '3157891234',
+    plan: 'Plan Escuela',
+    fecha: new Date(Date.now() - 43200000).toISOString()
+  },
+  {
+    id: 3,
+    nombre: 'Santiago Martínez',
+    edad: 16,
+    barrio: 'Kennedy',
+    posicion: 'Defensa',
+    whatsapp: '3209876543',
+    plan: 'Plan Familiar',
+    fecha: new Date().toISOString()
+  }
+];
+
+// Middleware para verificar JWT
+const verificarToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ success: false, message: 'Token no proporcionado' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(403).json({ success: false, message: 'Token inválido o expirado' });
+  }
+};
+
 // Endpoint de la IA: Recomendador Deportivo por Posición
 app.post('/api/ia/recomendar', (req, res) => {
   const { posicion } = req.body;
@@ -42,6 +92,62 @@ app.post('/api/ia/recomendar', (req, res) => {
   res.json({ posicion, ejercicios: ejerciciosMap[posicion] || ejerciciosMap['Delantero'] });
 });
 
+// Endpoint de Contacto con Match de Escuelas por Barrio
+app.post('/api/contacto', (req, res) => {
+  const { nombre, edad, barrio, posicion, whatsapp, plan } = req.body;
+  
+  const nuevoAtleta = {
+    id: Date.now(),
+    nombre: nombre || 'Atleta Sin Nombre',
+    edad: Number(edad) || 18,
+    barrio: barrio || 'Suba',
+    posicion: posicion || 'Delantero',
+    whatsapp: whatsapp || '',
+    plan: plan || 'Plan Jugador',
+    fecha: new Date().toISOString()
+  };
+  atletasRegistrados.unshift(nuevoAtleta);
+
+  const escuelasPorBarrio = {
+    Suba: [
+      { nombre: 'Escuela Deportivo Suba Tibabuyes', telefono: '300 123 4567', sede: 'Parque Mirador Suba' },
+      { nombre: 'Academia Talentos Suba Rincón', telefono: '311 987 6543', sede: 'Canchas La Gaitana' }
+    ],
+    Kennedy: [
+      { nombre: 'Club Deportivo Roma Kennedy', telefono: '312 456 7890', sede: 'Parque Timiza' },
+      { nombre: 'Academia Duros del Balón Kennedy', telefono: '318 654 3210', sede: 'Parque Bellavista' }
+    ],
+    Engativá: [
+      { nombre: 'Escuela Real Engativá', telefono: '314 555 1234', sede: 'Parque San Andrés' },
+      { nombre: 'Club Formativo Álamos Norte', telefono: '316 777 8899', sede: 'Canchas El Salitre' }
+    ],
+    Chapinero: [
+      { nombre: 'Academia Élite Chapinero Alto', telefono: '301 222 3344', sede: 'Canchas Calle 63' },
+      { nombre: 'Club Deportivo Javeriano', telefono: '310 999 0011', sede: 'Parque Nacional' }
+    ],
+    Bosa: [
+      { nombre: 'Semillero Bosa Carbonell', telefono: '315 444 3322', sede: 'Parque Zonal Bosa' },
+      { nombre: 'Academia Fortaleza Bosa', telefono: '321 888 7766', sede: 'Canchas Porvenir' }
+    ],
+    Usaquén: [
+      { nombre: 'Club Deportivo Usaquén Norte', telefono: '317 333 2211', sede: 'Parque Country Club' },
+      { nombre: 'Academia Cantera Cedritos', telefono: '302 444 5566', sede: 'Canchas Calle 140' }
+    ]
+  };
+
+  const escuelas = escuelasPorBarrio[barrio] || [
+    { nombre: Escuela Deportivo , telefono: '300 123 4567', sede: 'Sede Principal Bogotá' },
+    { nombre: Academia Talentos , telefono: '311 987 6543', sede: 'Centro de Alto Rendimiento' }
+  ];
+
+  res.json({
+    success: true,
+    mensaje: Cliente  registrado exitosamente,
+    escuelas,
+    atleta: nuevoAtleta
+  });
+});
+
 // Autenticación de Admin con JWT
 app.post('/api/admin/login', (req, res) => {
   const { user, pass } = req.body;
@@ -50,6 +156,23 @@ app.post('/api/admin/login', (req, res) => {
     return res.json({ success: true, token });
   }
   return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+});
+
+// Obtener listado de atletas (Protegido con JWT)
+app.get('/api/admin/atletas', verificarToken, (req, res) => {
+  res.json({ success: true, total: atletasRegistrados.length, atletas: atletasRegistrados });
+});
+
+// Exportar atletas a CSV (Protegido con JWT)
+app.get('/api/admin/export-csv', verificarToken, (req, res) => {
+  const encabezados = 'ID,Nombre,Edad,Barrio,Posicion,WhatsApp,Plan,FechaRegistro\n';
+  const filas = atletasRegistrados.map(a => 
+    "","","","","","","",""
+  ).join('\n');
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="atletas_coach_ghost.csv"');
+  res.send(encabezados + filas);
 });
 
 const PORT = process.env.PORT || 5000;
