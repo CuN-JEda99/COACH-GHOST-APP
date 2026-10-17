@@ -5,5 +5,5 @@ import { defineConfig } from 'vite'
 // NOTA: Actualiza 'base' con el nombre exacto de tu repositorio GitHub
 export default defineConfig({
   plugins: [react()],
-  base: '/COACH-GHOST-CUN/',
+  base: './',
 })
