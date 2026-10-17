@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
 import Pricing from './components/Pricing';
 import IaRecommender from './components/IaRecommender';
+import CameraAnalyzer from './components/CameraAnalyzer';
 import ContactForm from './components/ContactForm';
 import AdminPanel from './components/AdminPanel';
 import Footer from './components/Footer';
@@ -71,6 +72,7 @@ export default function App() {
             <HowItWorks />
             <Pricing onSelectPlan={handleSelectPlan} />
             <IaRecommender />
+            <CameraAnalyzer />
             <ContactForm selectedPlan={selectedPlan} />
           </>
         )}
