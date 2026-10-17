@@ -93,3 +93,45 @@ body {
 .nike-card:hover {
   border-color: rgba(0, 255, 136, 0.4);
 }
+
+/* Reglas de maquetación responsiva para dispositivos de 640px o menos */
+@media (max-width: 640px) {
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .mobile-toggle {
+    display: block !important;
+  }
+
+  section {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  h1 {
+    font-size: 2rem !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  h2 {
+    font-size: 1.6rem !important;
+  }
+
+  .nike-card {
+    padding: 1.25rem !important;
+  }
+
+  .nike-btn-neon {
+    width: 100% !important;
+    padding: 0.85rem 1rem !important;
+  }
+
+  table {
+    font-size: 0.75rem !important;
+  }
+
+  th, td {
+    padding: 0.5rem 0.5rem !important;
+  }
+}
