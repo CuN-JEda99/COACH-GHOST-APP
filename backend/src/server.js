@@ -63,6 +63,11 @@ const verificarToken = (req, res, next) => {
   }
 };
 
+// Endpoint de diagnóstico de salud del servidor
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'OK', service: 'COACH GHOST API', timestamp: new Date() });
+});
+
 // Endpoint de la IA: Recomendador Deportivo por Posición
 app.post('/api/ia/recomendar', (req, res) => {
   const { posicion } = req.body;
@@ -136,13 +141,13 @@ app.post('/api/contacto', (req, res) => {
   };
 
   const escuelas = escuelasPorBarrio[barrio] || [
-    { nombre: Escuela Deportivo , telefono: '300 123 4567', sede: 'Sede Principal Bogotá' },
-    { nombre: Academia Talentos , telefono: '311 987 6543', sede: 'Centro de Alto Rendimiento' }
+    { nombre: `Escuela Deportivo ${barrio || 'Bogotá'}`, telefono: '300 123 4567', sede: 'Sede Principal Bogotá' },
+    { nombre: `Academia Talentos ${barrio || 'Bogotá'}`, telefono: '311 987 6543', sede: 'Centro de Alto Rendimiento' }
   ];
 
   res.json({
     success: true,
-    mensaje: Cliente  registrado exitosamente,
+    mensaje: `Cliente ${nombre} registrado exitosamente`,
     escuelas,
     atleta: nuevoAtleta
   });
@@ -167,7 +172,7 @@ app.get('/api/admin/atletas', verificarToken, (req, res) => {
 app.get('/api/admin/export-csv', verificarToken, (req, res) => {
   const encabezados = 'ID,Nombre,Edad,Barrio,Posicion,WhatsApp,Plan,FechaRegistro\n';
   const filas = atletasRegistrados.map(a => 
-    "","","","","","","",""
+    `"${a.id}","${a.nombre}","${a.edad}","${a.barrio}","${a.posicion}","${a.whatsapp}","${a.plan}","${a.fecha}"`
   ).join('\n');
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -178,7 +183,7 @@ app.get('/api/admin/export-csv', verificarToken, (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => console.log(Backend COACH GHOST activo en puerto ));
+  app.listen(PORT, () => console.log(`Backend COACH GHOST activo en puerto ${PORT}`));
 }
 
 module.exports = app;
