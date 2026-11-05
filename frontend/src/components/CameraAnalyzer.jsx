@@ -1,14 +1,22 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Camera, CameraOff, RefreshCw, Activity, CheckCircle2, AlertTriangle, Upload, Download } from 'lucide-react';
 import { POSICIONES, CONEXIONES, PUNTOS_CLAVE, calcularMetricas, REGLAS, puntuar, generarInforme } from '../utils/postureAnalysis';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
-/*
- * COACH GHOST - Entrenador con cámara
- *  1) Análisis de postura en vivo.
- *  2) Grabar una jugada (o subir un video), analizarla cuadro a cuadro y recibir un informe con qué mejorar.
- * Usa MediaPipe Pose (Tasks Vision) cargado desde CDN, sin instalar paquetes.
- * Todo corre en el dispositivo: el video NO se envía a ningún servidor.
- */
+const guardarCSVNativo = async (datosCSV, nombreArchivo) => {
+  try {
+    await Filesystem.writeFile({
+      path: nombreArchivo, 
+      data: datosCSV,       
+      directory: Directory.Documents, 
+      encoding: Encoding.UTF8,
+    });
+    alert('¡Reporte guardado con éxito en tus Documentos!');
+  } catch (error) {
+    console.error('Error al guardar el archivo CSV', error);
+  }
+};
+
 
 const VISION_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs';
 const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm';

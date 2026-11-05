@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@capacitor/camera": "^8.2.6",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/core": "^8.6.0"
   }
