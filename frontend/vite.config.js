@@ -16,8 +16,8 @@ export default defineConfig({
         background_color: "#000000",
         display: "standalone",
         orientation: "portrait",
-        scope: "/COACH-GHOST-APP/",
-        start_url: "/COACH-GHOST-APP/",
+        scope: "./",
+        start_url: "./",
         icons: [
           {
             src: "icons/icon-192.png",
@@ -48,5 +48,5 @@ export default defineConfig({
       }
     })
   ],
-  base: "/COACH-GHOST-APP/"
+  base: "./"
 });
