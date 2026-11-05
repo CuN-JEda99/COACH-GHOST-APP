@@ -1,0 +1,5 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#000000"/>
+  <polygon points="256,80 320,200 450,200 350,280 390,420 256,340 122,420 162,280 62,200 192,200" fill="#00FF88" stroke="#00FF88" stroke-width="4"/>
+  <text x="256" y="470" text-anchor="middle" font-family="Arial,sans-serif" font-weight="900" font-size="60" fill="#00FF88" letter-spacing="4">CG</text>
+</svg>

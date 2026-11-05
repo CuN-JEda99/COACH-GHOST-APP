@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">COACH-GHOST</string>
+    <string name="title_activity_main">COACH-GHOST</string>
+    <string name="package_name">com.coachghost.app</string>
+    <string name="custom_url_scheme">com.coachghost.app</string>
+</resources>
